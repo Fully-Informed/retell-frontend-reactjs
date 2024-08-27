@@ -12,42 +12,48 @@ const retellWebClient = new RetellWebClient();
 
 const App = () => {
   const [isCalling, setIsCalling] = useState(false);
+  const [isAgentSpeaking, setIsAgentSpeaking] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     retellWebClient.on("call_started", () => {
       console.log("call started");
+      setIsCalling(true);
     });
 
     retellWebClient.on("call_ended", () => {
       console.log("call ended");
       setIsCalling(false);
+      setIsAgentSpeaking(false);
     });
 
     retellWebClient.on("agent_start_talking", () => {
       console.log("agent_start_talking");
+      setIsAgentSpeaking(true);
     });
 
     retellWebClient.on("agent_stop_talking", () => {
       console.log("agent_stop_talking");
+      setIsAgentSpeaking(false);
     });
 
     retellWebClient.on("audio", (audio) => {
-      // console.log(audio);
+      // Handle audio if needed
     });
 
     retellWebClient.on("update", (update) => {
-      // console.log(update);
+      // Handle updates if needed
     });
 
     retellWebClient.on("metadata", (metadata) => {
-      // console.log(metadata);
+      // Handle metadata if needed
     });
 
     retellWebClient.on("error", (error) => {
       console.error("An error occurred:", error);
       retellWebClient.stopCall();
       setIsCalling(false);
+      setIsAgentSpeaking(false);
     });
   }, []);
 
@@ -62,7 +68,6 @@ const App = () => {
             accessToken: registerCallResponse.access_token,
           })
           .catch(console.error);
-        setIsCalling(true);
       }
     }
   };
@@ -94,9 +99,16 @@ const App = () => {
   return (
     <div className="App" ref={containerRef}>
       <header className="App-header">
-        <button onClick={toggleConversation}>
-          {isCalling ? "Stop" : "Start"}
-        </button>
+        <div
+          className={`portrait-container ${isCalling ? 'active' : 'inactive'} ${isAgentSpeaking ? 'agent-speaking' : ''}`}
+          onClick={toggleConversation}
+        >
+          <img
+            src="/Fiona_Round.png"
+            alt="Fiona"
+            className="agent-portrait"
+          />
+        </div>
       </header>
     </div>
   );
