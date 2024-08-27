@@ -66,30 +66,31 @@ const App = () => {
     console.log("Event listeners set up complete");
   }, []);
 
-  const toggleConversation = async () => {
-    console.log("toggleConversation called, current isCalling:", isCalling);
-    if (isCalling) {
-      console.log("Stopping call");
-      retellWebClient.stopCall();
-    } else {
-      console.log("Starting call");
-      try {
-        const registerCallResponse = await registerCall(agentId);
-        console.log("Register call response:", registerCallResponse);
-        if (registerCallResponse.access_token) {
-          console.log("Starting call with access token");
-          await retellWebClient.startCall({
-            accessToken: registerCallResponse.access_token,
-          });
-          console.log("Call started successfully");
-        } else {
-          console.error("No access token received");
-        }
-      } catch (error) {
-        console.error("Error starting call:", error);
+const toggleConversation = async () => {
+  console.log("toggleConversation called, current isCalling:", isCalling);
+  if (isCalling) {
+    console.log("Stopping call");
+    retellWebClient.stopCall();
+  } else {
+    console.log("Starting call");
+    try {
+      const registerCallResponse = await registerCall(agentId);
+      console.log("Register call response:", registerCallResponse);
+      if (registerCallResponse.access_token) {
+        console.log("Starting call with access token");
+        await retellWebClient.startCall({
+          accessToken: registerCallResponse.access_token,
+        });
+        console.log("Call started successfully");
+      } else {
+        console.error("No access token received");
       }
+    } catch (error) {
+      console.error("Error starting call:", error.message);
+      // You might want to show an error message to the user here
     }
-  };
+  }
+};
 
   async function registerCall(agentId: string): Promise<RegisterCallResponse> {
     console.log("Registering call for agent ID:", agentId);
